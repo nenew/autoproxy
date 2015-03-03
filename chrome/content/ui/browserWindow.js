@@ -39,6 +39,7 @@ let eventHandlers = [
   ["aup-command-settings", "command", function() { aup.openSettingsDialog(); }],
   ["aup-command-report", "command", report2gfwList],
   ["aup-command-sidebar", "command", toggleSidebar],
+  ["aup-command-editproxies", "command", function() { window.openDialog("chrome://autoproxy/content/ui/editProxyServer.xul", "_blank", "chrome,centerscreen"); }],
   ["aup-command-contextmenu", "command", function(e) {
     if (e.eventPhase == e.AT_TARGET) E("aup-status-popup").openPopupAtScreen(window.screen.width/2, window.screen.height/2, false); }],
   ["aup-command-modeauto", "command", function() { proxy.switchToMode('auto'); }],
@@ -75,7 +76,7 @@ aupInit();
 
 function aupInit() {
   // Initialize app hooks
-  for each (let hook in ["getBrowser", "addTab", "getToolbox", "getDefaultToolbar", "toolbarInsertBefore"])
+  for (let hook of ["getBrowser", "addTab", "getToolbox", "getDefaultToolbar", "toolbarInsertBefore"])
   {
     let handler = aupHooks.getAttribute(hook);
     if (handler)
@@ -131,8 +132,8 @@ function aupInit() {
   }
 
   // Register event listeners
-  window.addEventListener("unload", aupUnload, false);
-  for each (let [id, event, handler] in eventHandlers)
+  //window.addEventListener("unload", aupUnload, false);
+  for (let [id, event, handler] of eventHandlers)
   {
     let element = E(id);
     if (element)
@@ -349,7 +350,7 @@ function aupInstallInToolbar()
 function aupShowSubscriptions()
 {
   // Look for existing subscriptions
-  for each (let subscription in filterStorage.subscriptions)
+  for (let subscription of filterStorage.subscriptions)
     if (subscription instanceof aup.DownloadableSubscription)
       return;
 
@@ -627,7 +628,7 @@ function makeProxyItems(popup)
 {
   while (popup.firstChild) popup.removeChild(popup.firstChild);
 
-  for each (let p in proxy.getName) {
+  for (let p of proxy.getName) {
     let item = cE('menuitem');
     item.setAttribute('type', 'radio');
     item.setAttribute('label', p);
@@ -650,14 +651,24 @@ function chooseProxy4RuleGroups(flagItem)
   removeAllMenuItems(flagItem, 'chooseProxy4RuleGroups');
 
   // one menu per rule group
-  for each (var subscription in filterStorage.knownSubscriptions) {
-    createRuleGroupProxyPopup(subscription);
+  // for (var subscription in filterStorage.knownSubscriptions) {
+    // createRuleGroupProxyPopup(filterStorage.knownSubscriptions[subscription]);
+  // }
+  let knownSubs = new Set();
+  filterStorage.subscriptions.forEach(function(sub) {
+    for (let subscription in filterStorage.knownSubscriptions){
+      if(filterStorage.knownSubscriptions[subscription] == sub)
+        knownSubs.add(sub);
+    }
+  });
+  for (let sub of knownSubs.values()) {
+    createRuleGroupProxyPopup(sub);
   }
 
   // if user has no rule group, insert a note
-  if (flagItem.previousSibling.className != 'chooseProxy4RuleGroups') {
+  if (!flagItem.previousSibling.classList.contains('chooseProxy4RuleGroups')) {
     var note = cE('menu');
-    note.className = 'chooseProxy4RuleGroups';
+    note.classList.add('chooseProxy4RuleGroups');
     note.setAttribute('disabled', true);
     note.setAttribute('label', aup.getString('no_proxy_rule'));
     flagItem.parentNode.insertBefore(note, flagItem);
@@ -668,7 +679,7 @@ function chooseProxy4RuleGroups(flagItem)
 
   // create a menuseparator
   flagItem.parentNode.insertBefore(cE('menuseparator'), flagItem);
-  flagItem.previousSibling.className = 'chooseProxy4RuleGroups';
+  flagItem.previousSibling.classList.add('chooseProxy4RuleGroups');
 
 
   function createRuleGroupProxyPopup(subscription)
@@ -686,11 +697,47 @@ function chooseProxy4RuleGroups(flagItem)
       menuLabel = aup.getString('not_matching') + ': ' + selectedProxy;
     }
 
-    groupMenu.className = 'chooseProxy4RuleGroups';
+    groupMenu.classList.add('chooseProxy4RuleGroups');
     groupMenu.setAttribute('label', menuLabel);
     groupMenu.setAttribute('disabled', prefs.proxyMode != 'auto');
     groupMenu.setAttribute('value', subscription ? subscription.url : 'fallback');
     groupMenu.appendChild(groupPopup);
+
+    if (subscription)
+    {
+      groupMenu._isCheckbox = false;
+      groupMenu._hidePopupTimeout = null;
+      groupMenu.setAttribute('checked', groupMenu.checked = !subscription.disabled);
+      groupMenu.setAttribute('type', 'checkbox');
+      groupMenu.classList.add('menu-iconic');
+      groupMenu.addEventListener('click', function (event)
+      {
+        if (!this._isCheckbox || event.button != 0) return;
+        subscription.disabled = this.checked;
+        filterStorage.triggerSubscriptionObservers('updateinfo', [subscription]);
+        this.setAttribute('checked', this.checked = !this.checked);
+      }, false);
+      groupMenu.addEventListener('mousemove', function (event)
+      {
+        this._isCheckbox = event.target == this && (event.clientX + 6 < document.getAnonymousElementByAttribute(this, 'class', 'menu-iconic-text').boxObject.x);
+        if (this._isCheckbox && this.firstChild.boxObject.popupState != 'closed')
+        {
+          event.view.clearTimeout(this._hidePopupTimeout);
+          this._hidePopupTimeout = event.view.setTimeout(function ()
+          {
+            groupMenu.firstChild.hidePopup();
+          }, 150);
+        }
+      }, false);
+      groupMenu.addEventListener('mouseout', function (event)
+      {
+        event.view.clearTimeout(this._hidePopupTimeout);
+      }, false);
+      groupMenu.addEventListener('popupshowing', function (event)
+      {
+        this._isCheckbox && event.preventDefault();
+      }, true);
+    }
 
     // popup proxy items created here
     createMenuItem(aup.getString(subscription ? 'default_proxy' : 'no_proxy'));
@@ -718,7 +765,6 @@ function setGroupProxy(event)
   var menuItem = event.target,
       selectedIndex = proxy.getName.indexOf(menuItem.label),
       subscriptionUrl = menuItem.parentNode.parentNode.value;
-
   if (subscriptionUrl == 'fallback') {
     prefs.fallbackProxy = selectedIndex;
     prefs.save();

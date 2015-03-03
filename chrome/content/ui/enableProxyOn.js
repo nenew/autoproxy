@@ -132,7 +132,7 @@ function toggleFilter(filter)
     siteFilters.forEach(function(filter) {
       filter.disabled = true;
       filterStorage.triggerFilterObservers("disable", [filter]);
-      filterStorage.removeFilter(filter);
+      //filterStorage.removeFilter(filter);
     });
   }
   else {
@@ -174,7 +174,7 @@ function suffixed(/**Filter*/ filter)
 function removeAllMenuItems(lastItem, className)
 {
   while (lastItem.previousSibling) {
-    lastItem.previousSibling.className == className ?
+    lastItem.previousSibling.classList.contains(className) ?
       lastItem.parentNode.removeChild(lastItem.previousSibling) :
       lastItem = lastItem.previousSibling;
   }

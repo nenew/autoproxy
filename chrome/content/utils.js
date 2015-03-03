@@ -114,7 +114,7 @@ function getRequestWindow(/**nsIChannel*/ channel) /**nsIDOMWindow*/
   if (channel.loadGroup && channel.loadGroup.notificationCallbacks)
     callbacks.push(channel.loadGroup.notificationCallbacks);
 
-  for each (let callback in callbacks)
+  for (let callback of callbacks)
   {
     try {
       // For Gecko 1.9.1

@@ -21,6 +21,7 @@
 <!ENTITY tooltip.filterSource.label "Regelquelle:">
 <!ENTITY context.disablefilteronsite.label "Diese Regel für -- deaktivieren">
 <!ENTITY context.enablefilteronsite.label "Diese Regel für -- aktivieren">
+<!ENTITY context.editfilter.label "Angewandten Regel bearbeiten">
 <!ENTITY context.open.label "In neuem Tab öffnen">
 <!ENTITY context.flash.label "Objektränder blinken lassen">
 <!ENTITY context.copy.label "Adresse des Objekts kopieren">

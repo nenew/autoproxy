@@ -202,7 +202,7 @@ Matcher.prototype = {
     }
 
     // Slow matching for filters without shortcut
-    for each (let filter in this.regexps)
+    for (let filter of this.regexps)
       if (filter.matches(location, contentType, docDomain, thirdParty))
         return filter;
 

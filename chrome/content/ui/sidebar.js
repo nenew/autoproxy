@@ -21,7 +21,6 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** */
-
 var RequestList = aup.RequestList;
 
 // Main browser window
@@ -30,7 +29,7 @@ var mainWin = parent;
 // The window handler currently in use
 var wndData = null;
 
-var cacheSession = null;
+var cacheStorage = null;
 var noFlash = false;
 
 // Matchers for disabled filters
@@ -99,9 +98,10 @@ function init() {
           .getLocation(6, aupHooks.getBrowser().currentURI.spec);
   if(rootCurrentData) locations.push(rootCurrentData);
   treeView.setData(wndData.getAllLocations(locations));
-  if (wndData.lastSelection) {
+  var getSelection = RequestList.getSelection(wndData);
+  if (getSelection) {
     noFlash = true;
-    treeView.selectItem(wndData.lastSelection);
+    treeView.selectItem(getSelection);
     noFlash = false;
   }
 
@@ -137,12 +137,12 @@ function reloadDisabledFilters()
   disabledBlacklistMatcher.clear();
   disabledWhitelistMatcher.clear();
 
-  for each (let subscription in filterStorage.subscriptions)
+  for (let subscription of filterStorage.subscriptions)
   {
     if (subscription.disabled)
       continue;
 
-    for each (let filter in subscription.filters)
+    for (let filter of subscription.filters)
       if (filter instanceof aup.RegExpFilter && filter.disabled)
         (filter instanceof aup.BlockingFilter ? disabledBlacklistMatcher : disabledWhitelistMatcher).add(filter);
   }
@@ -156,7 +156,10 @@ function onSelectionChange() {
   else
     E("copy-command").setAttribute("disabled", "true");
   if (item && wndData)
-    wndData.lastSelection = item;
+  {
+    RequestList.storeSelection(wndData, item);
+    treeView.itemToSelect = null;
+  }
 
   if (!noFlash)
     flasher.flash(item ? item.nodes : null);
@@ -190,6 +193,7 @@ function handleItemChange(wnd, type, data, item) {
             .getLocation(6, aupHooks.getBrowser().currentURI.spec);
     if(rootCurrentData) locations.push(rootCurrentData);
     treeView.setData(wndData.getAllLocations(locations));
+    cacheStorage = null;
   }
   else if (type == "invalidate")
     treeView.boxObject.invalidate();
@@ -204,9 +208,10 @@ function handleTabChange() {
           .getLocation(6, aupHooks.getBrowser().currentURI.spec);
   if(rootCurrentData) locations.push(rootCurrentData);
   treeView.setData(wndData.getAllLocations(locations));
-  if (wndData.lastSelection) {
+  var getSelection = RequestList.getSelection(wndData);
+  if (getSelection) {
     noFlash = true;
-    treeView.selectItem(wndData.lastSelection);
+    treeView.selectItem(getSelection);
     noFlash = false;
   }
 }
@@ -276,38 +281,74 @@ function fillInTooltip(e) {
       let sourceElement = E("tooltipFilterSource");
       while (sourceElement.firstChild)
         sourceElement.removeChild(sourceElement.firstChild);
-      for each (let subscription in subscriptions)
+      for (let subscription of subscriptions)
         setMultilineContent(sourceElement, subscription.title, true);
     }
   }
 
   var showPreview = prefs.previewimages && !("tooltip" in item);
   showPreview = showPreview && (item.typeDescr == "IMAGE" || item.typeDescr == "BACKGROUND");
-  if (showPreview) {
-    // Check whether image is in cache (stolen from ImgLikeOpera)
-    if (!cacheSession) {
-      var cacheService = Cc["@mozilla.org/network/cache-service;1"].getService(Ci.nsICacheService);
-      cacheSession = cacheService.createSession("HTTP", Ci.nsICache.STORE_ANYWHERE, true);
+  E("tooltipPreviewBox").hidden = true;
+  if (showPreview)
+  {
+    let {Services} = Cu.import("resource://gre/modules/Services.jsm", null);
+    if (!cacheStorage)
+    {
+      // Cache v2 API is enabled by default starting with Gecko 32
+      if (Services.vc.compare(Services.appinfo.version, "32.0a1") >= 0)
+      {
+        let {LoadContextInfo} = Cu.import("resource://gre/modules/LoadContextInfo.jsm", null);
+        let loadContext = content.QueryInterface(Ci.nsIInterfaceRequestor)
+                                 .getInterface(Ci.nsIWebNavigation)
+                                 .QueryInterface(Ci.nsILoadContext);
+        cacheStorage = Services.cache2.diskCacheStorage(LoadContextInfo.fromLoadContext(loadContext, false), false);;
+      }
+      else
+        cacheStorage = Services.cache.createSession("HTTP", Ci.nsICache.STORE_ANYWHERE, true);
     }
-
-    try {
-      var descriptor = cacheSession.openCacheEntry(item.location, Ci.nsICache.ACCESS_READ, false);
-      descriptor.close();
+    
+    let showTooltipPreview = function ()
+    {
+      E("tooltipPreview").setAttribute("src", item.location);
+      E("tooltipPreviewBox").hidden = false;
+    };
+    try
+    {
+      if (Ci.nsICacheStorage && cacheStorage instanceof Ci.nsICacheStorage)
+      {
+        cacheStorage.asyncOpenURI(Services.io.newURI(item.location, null, null), "", Ci.nsICacheStorage.OPEN_READONLY, {
+          onCacheEntryCheck: function (entry, appCache)
+          {
+            return Ci.nsICacheEntryOpenCallback.ENTRY_WANTED;
+          },
+          onCacheEntryAvailable: function (entry, isNew, appCache, status)
+          {
+            if (!isNew)
+              showTooltipPreview();
+          }
+        });
+      }
+      else
+      {
+        cacheStorage.asyncOpenCacheEntry(item.location, Ci.nsICache.ACCESS_READ, {
+          onCacheEntryAvailable: function(descriptor, accessGranted, status)
+          {
+            if (!descriptor)
+              return;
+            descriptor.close();
+            showTooltipPreview();
+          },
+          onCacheEntryDoomed: function(status)
+          {
+          }
+        });
+      }
     }
-    catch (e) {
-      showPreview = false;
+    catch (e)
+    {
+      Cu.reportError(e);
     }
   }
-
-  if (showPreview) {
-    E("tooltipPreviewBox").hidden = false;
-    E("tooltipPreview").setAttribute("src", "");
-    E("tooltipPreview").setAttribute("src", item.location);
-  }
-  else
-    E("tooltipPreviewBox").hidden = true;
-
-  return true;
 }
 
 const visual = {
@@ -339,6 +380,7 @@ function fillInContext(/**Event*/ e)
   enableProxyOn(E('contextOpen'), aup.makeURL(item.location));
 
   E("contextCopyFilter").setAttribute("disabled", !allItems.some(function(item) {return "filter" in item && item.filter}));
+  E("contextEditFilter").setAttribute("disabled", !("filter" in item && item.filter));
 
   return true;
 }
@@ -361,6 +403,11 @@ function handleClick(event)
     openInTab(item);
     event.preventDefault();
   }
+}
+
+function editFilter(){
+  let {location: location, filter: filter} = treeView.getSelectedItem();
+  aup.openSettingsDialog(location, filter);
 }
 
 /**
@@ -472,7 +519,7 @@ function getItemSize(item)
   if (item.filter && !item.filter.disabled && item.filter instanceof aup.BlockingFilter)
     return null;
 
-  for each (let node in item.nodes)
+  for (let node of item.nodes)
   {
     if (node instanceof HTMLImageElement && (node.naturalWidth || node.naturalHeight))
       return [node.naturalWidth, node.naturalHeight];
@@ -589,9 +636,9 @@ var treeView = {
     var atomService = Cc["@mozilla.org/atom-service;1"].getService(Ci.nsIAtomService);
 
     this.atoms = {};
-    for each (let atom in stringAtoms)
+    for (let atom of stringAtoms)
       this.atoms[atom] = atomService.getAtom(atom);
-    for each (let atom in boolAtoms)
+    for (let atom of boolAtoms)
     {
       this.atoms[atom + "-true"] = atomService.getAtom(atom + "-true");
       this.atoms[atom + "-false"] = atomService.getAtom(atom + "-false");
@@ -685,22 +732,36 @@ var treeView = {
     col = col.id;
 
     if ("col-" + col in this.atoms)
+    if(properties)
       properties.AppendElement(this.atoms["col-" + col]);
+    else
+      return "col-" + col;
   },
 
   getRowProperties: function(row, properties) {
     if (row >= this.rowCount)
       return;
-
-    properties.AppendElement(this.atoms["selected-" + this.selection.isSelected(row)]);
-
+    var proStr ="";
+    if(properties){
+      properties.AppendElement(this.atoms["selected-" + this.selection.isSelected(row)]);
+    }else{
+      proStr = "selected-" + this.selection.isSelected(row);
+    }
     var state;
     if (this.data && this.data.length) {
+    if(properties){
       properties.AppendElement(this.atoms["dummy-false"]);
+    }else{
+      proStr+= " dummy-false";
+    }
 
-      let filter = this.data[row].filter;
-      if (filter)
+    let filter = this.data[row].filter;
+    if (filter){
+      if(properties){
         properties.AppendElement(this.atoms["filter-disabled-" + filter.disabled]);
+      }else{
+        proStr+= " filter-disabled-" + filter.disabled;
+      }
 
       state = "state-regular";
       if (filter && !filter.disabled)
@@ -710,19 +771,30 @@ var treeView = {
         else if (filter instanceof aup.BlockingFilter)
           state = "state-filtered";
       }
-    }
-    else {
-      properties.AppendElement(this.atoms["dummy-true"]);
-
+    } else {
+      if(properties){
+          properties.AppendElement(this.atoms["dummy-true"]);
+      }else{
+        proStr+= " dummy-true";
+      }
       state = "state-filtered";
     }
-    properties.AppendElement(this.atoms[state]);
+    proStr+= " "+state;
+    if(properties){
+      properties.AppendElement(this.atoms[state]);
+    }else{
+      return proStr;
+    }
   },
 
   getCellProperties: function(row, col, properties)
   {
-    this.getColumnProperties(col, properties);
-    this.getRowProperties(row, properties);
+    if(properties){
+      this.getColumnProperties(col, properties);
+      this.getRowProperties(row, properties);
+    }else{
+      return this.getColumnProperties(col, properties)+" "+this.getRowProperties(row, properties);
+    }
   },
 
   cycleHeader: function(col) {
@@ -818,7 +890,7 @@ var treeView = {
     var oldRows = this.rowCount;
 
     this.allData = data;
-    for each (let item in this.allData)
+    for (let item of this.allData)
     {
       if (!item.filter)
         item.filter = disabledWhitelistMatcher.matchesAny(item.location, item.typeDescr, item.docDomain, item.thirdParty);

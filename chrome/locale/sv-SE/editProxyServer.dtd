@@ -5,6 +5,7 @@
 <!ENTITY http.label "http">
 <!ENTITY socks4.label "socks4">
 <!ENTITY socks5.label "socks5">
+<!ENTITY remotedns.label "Remote DNS">
 <!ENTITY delete.label "Ta bort">
 <!ENTITY addButton.label "Lägg till proxy">
 <!ENTITY addButton.accesskey "L">

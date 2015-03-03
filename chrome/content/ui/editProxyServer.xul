@@ -53,6 +53,7 @@
         <label value="&socks4.label;"/>
         <label value="&socks5.label;"/>
       </hbox>
+      <label value="&remotedns.label;"/>
       <label value="&delete.label;"/>
     </row>
     <!-- Proxy configs will be added here by JS -->

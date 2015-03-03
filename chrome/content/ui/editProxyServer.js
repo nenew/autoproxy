@@ -44,10 +44,12 @@ function createBlankRow(proxy)
   var proxyHost = cE("textbox");
   var proxyPort = cE("textbox");
   var proxyType = cE("radiogroup");
+  var proxyRemote = cE("checkbox");
   var proxyDele = cE("checkbox");
   proxyName.setAttribute("class", "proxyName");
   proxyHost.setAttribute("class", "proxyHost");
   proxyPort.setAttribute("class", "proxyPort");
+  proxyRemote.setAttribute("class", "remoteBox");
   proxyDele.setAttribute("class", "deleBox");
   proxyType.setAttribute("orient", "horizontal");
 
@@ -64,6 +66,8 @@ function createBlankRow(proxy)
     proxyName.setAttribute("value", proxy.name);
     proxyHost.setAttribute("value", proxy.host);
     proxyPort.setAttribute("value", proxy.port);
+    proxyRemote.setAttribute("checked", proxy.remoteDNS == 1);
+    proxyRemote.setAttribute('disabled', proxy.type != 'socks');
   }
 
   // insert type nodes to type
@@ -71,11 +75,19 @@ function createBlankRow(proxy)
   proxyType.appendChild(socks4);
   proxyType.appendChild(socks);
 
+  proxyType.addEventListener('select', () => {
+    if(http.selected || socks4.selected)
+      proxyRemote.setAttribute('disabled', true);
+    else if(socks.selected)
+      proxyRemote.removeAttribute('disabled');
+  }, false);
+
   // insert row nodes to the new proxy row
   proxyRow.appendChild(proxyName);
   proxyRow.appendChild(proxyHost);
   proxyRow.appendChild(proxyPort);
   proxyRow.appendChild(proxyType);
+  proxyRow.appendChild(proxyRemote);
   proxyRow.appendChild(proxyDele);
 
   // insert proxy row to rows
@@ -189,10 +201,14 @@ function saveProxyServerSettings()
     // 'host' or 'port' not filled, ignore this row.
     if ( /;;/.test(temp) ) continue;
 
-    pDs = pDs.firstChild; // pDs -> 'http'
-    if (pDs.selected) ; // http is default
-    else if (pDs.nextSibling.selected) temp += "socks4";
+    var pRadio = pDs.firstChild; // pDs -> 'http'
+    if (pRadio.selected) ; // http is default
+    else if (pRadio.nextSibling.selected) temp += "socks4";
       else temp += "socks"; // socks means socks5
+
+    // remote DNS
+    if(pDs.nextSibling.getAttribute('checked') == 'true') temp += ";1";
+    else temp += ";0";
 
     // 127.0.0.1 is default
     temp = temp.replace(/127\.0\.0\.1/, "");
@@ -208,7 +224,7 @@ function saveProxyServerSettings()
           let newProxies = aup.proxy.configToObj(pConfig);
           let hasDefaultProxy = newProxies.some(function(proxy, index) {
               if (proxy.name == aup.proxy.nameOfDefaultProxy) {
-                  prefs.defaultProxy = index + 1;
+                  prefs.defaultProxy = index;
                   return true;
               }
           });

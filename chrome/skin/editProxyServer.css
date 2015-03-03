@@ -45,16 +45,14 @@ textbox.proxyName {
   width: 45px;
 }
 
-radiogroup > .proxyHttp {
-  margin-left: 10px;
+radio, checkbox{
+  -moz-box-flex:1;
+  -moz-box-pack: center;
 }
 
-radiogroup > .proxySocks4, radiogroup > .proxySocks5 {
-  margin-left: 21px;
-}
-
-.deleBox {
-  margin-left: 10px;
+radio .radio-label-box,
+checkbox .checkbox-label-box{
+  display: none
 }
 
 #note, #warning {

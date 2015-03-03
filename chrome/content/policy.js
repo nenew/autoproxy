@@ -70,7 +70,7 @@ var policy =
     this.typeDescr = {};
     this.localizedDescr = {};
     var iface = Ci.nsIContentPolicy;
-    for each (let typeName in types)
+    for (let typeName of types)
     {
       if ("TYPE_" + typeName in iface)
       {
@@ -102,8 +102,8 @@ var policy =
         node = node.ownerDocument;
 
       // Fix type for background images
-      if (contentType == this.type.IMAGE && node.nodeType == Node.DOCUMENT_NODE)
-        contentType = this.type.BACKGROUND;
+      //if (contentType == this.type.IMAGE && node.nodeType == Node.DOCUMENT_NODE)
+      //  contentType = this.type.BACKGROUND;
 
       // Fix type for objects misrepresented as frames or images
       if (contentType != this.type.OBJECT && (node instanceof Ci.nsIDOMHTMLObjectElement || node instanceof Ci.nsIDOMHTMLEmbedElement))
@@ -122,7 +122,7 @@ var policy =
     //   * no sidebar window can be used to display extension's http request;
     //   * shouldLoad() doesn't check extension's request, any way to do this?
     //     * just like onChannelRedirect() did for 301/302 redirection.
-    if (location == this.ContentURI) {
+    if (location == this.ContentURI && arguments.length == 2) {
       var data = RequestList.getDataForWindow(wnd);
       data.addNode(node, contentType, docDomain, thirdParty, locationText, match);
     }
@@ -167,16 +167,23 @@ var policy =
   //
   shouldLoad: function(contentType, contentLocation, requestOrigin, node, mimeTypeGuess, extra)
   {
+    var location = unwrapURL(contentLocation);
+    var Wnd = getWindow(node);
     if (proxy.isProxyableScheme(contentLocation)) {
       // Interpret unknown types as "other"
       if (!(contentType in this.typeDescr))
         contentType = this.type.OTHER;
 
-      this.Wnd = getWindow(node);
+      this.Wnd = Wnd;
       this.Node = node;
       this.ContentType = contentType;
-      this.ContentURI = unwrapURL(contentLocation);
+      this.ContentURI = location;
     }
+
+  if (!(contentType == this.type.OBJECT && node.ownerDocument && !/^text\/|[+\/]xml$/.test(node.ownerDocument.contentType))
+  && !(!node || contentType == this.type.DOCUMENT) && Wnd){
+    this.autoMatching(location, true);
+  }
     return ok;
   },
 
@@ -206,7 +213,7 @@ var policy =
       }
 
       let info = null;
-      for each (let context in contexts)
+      for (let context of contexts)
       {
         // Did we record the original request in its own window?
         let data = RequestList.getDataForWindow(context, true);

@@ -57,9 +57,9 @@ var proxy =
      * newProxyInfo(type, host, port, socks_remote_dns, failoverTimeout, failoverProxy)
      */
     proxy.server = []; proxy.getName = [];
-    for each (var conf in proxy.validConfigs) {
+    for (var conf of proxy.validConfigs) {
       proxy.getName.push(conf.name);
-      proxy.server.push(pS.newProxyInfo(conf.type, conf.host, conf.port, 1, 0, null));
+      proxy.server.push(pS.newProxyInfo(conf.type, conf.host, conf.port, (conf.type == 'socks' && conf.remoteDNS ? Ci.nsIProxyInfo.TRANSPARENT_PROXY_RESOLVES_HOST : 0), 0, null));
     }
 
     // Refresh defaultProxy {nsIProxyInfo}
@@ -67,7 +67,9 @@ var proxy =
     proxy.nameOfDefaultProxy = proxy.getName[prefs.defaultProxy] || proxy.getName[0];
 
     // Refresh fallbackProxy {nsIProxyInfo}
-    proxy.fallbackProxy = prefs.fallbackProxy == -1 ?
+    //proxy.fallbackProxy = prefs.fallbackProxy == -1 ?
+    proxy.failoverTimeout = 1800;
+    proxy.failoverProxy = prefs.fallbackProxy == -1 ?
            proxy.direct : proxy.server[prefs.fallbackProxy];
 
     pS.unregisterFilter(proxy);
@@ -84,9 +86,9 @@ var proxy =
   {
     var proxyObjArray = [];
 
-    for each (var proxyAttr in config.split('$')) {
+    for (var proxyAttr of config.split('$')) {
       proxyAttr = proxyAttr.split(';');
-      if (proxyAttr.length != 4 || proxyAttr[0] == '' || isNaN(proxyAttr[2]))
+      if (proxyAttr.length < 4 || proxyAttr[0] == '' || isNaN(proxyAttr[2]))
         continue;
 
       var proxyObj = {};
@@ -94,6 +96,7 @@ var proxy =
       proxyObj.host = proxyAttr[1] == '' ? '127.0.0.1' : proxyAttr[1];
       proxyObj.port = proxyAttr[2];
       proxyObj.type = /^socks4?$/i.test(proxyAttr[3]) ? proxyAttr[3] : 'http';
+      proxyObj.remoteDNS = parseInt((typeof proxyAttr[4] == 'undefined') ? 1 : proxyAttr[4]);
       proxyObjArray.push(proxyObj);
     }
 
@@ -143,7 +146,7 @@ var proxy =
   isNoProxy: function(match)
   {
     if (match instanceof WhitelistFilter)
-//      for each (var s in match.subscriptions)
+//      for (var s of match.subscriptions)
 //        if (!s.disabled && s.url == "~wl~")
           return true;
 
@@ -153,7 +156,7 @@ var proxy =
   getGroupProxy: function(match)
   {
     if (!match || match instanceof WhitelistFilter) return null;
-    for each (var s in match.subscriptions)
+    for (var s of match.subscriptions)
       if (!s.disabled)
         return this.server[s.proxy] || this.defaultProxy;
   }

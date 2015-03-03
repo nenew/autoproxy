@@ -93,6 +93,7 @@
 
     <menupopup id="context" onpopupshowing="return fillInContext(event)">
       <!--"Enable Proxy On" menu items will be insert here by JS-->
+      <menuitem id="contextEditFilter" label="&context.editfilter.label;" oncommand="editFilter()"/>
       <menuitem id="contextOpen" label="&context.open.label;" oncommand="openInTab(null)"/>
       <menuitem id="contextFlash" label="&context.flash.label;" oncommand="onSelectionChange()"/>
       <menuitem id="contextCopy" label="&context.copy.label;" command="copy-command" key="copy-key"/>
@@ -105,7 +106,7 @@
   <hbox>
     <hbox align="center" flex="1">
       <label value="&search.label;" accesskey="&search.accesskey;" control="searchField"/>
-      <textbox id="searchField" flex="1" type="timed" timeout="500" oncommand="treeView.setFilter(this.value)"/>
+      <textbox id="searchField" flex="1" type="search" oncommand="treeView.setFilter(this.value)"/>
     </hbox>
     <description id="detachButton" value="&detach.label;" onclick="detach(true)"/>
     <description id="reattachButton" value="&reattach.label;" onclick="if (this.getAttribute('disabled') != 'true') detach(false)" hidden="true"/>

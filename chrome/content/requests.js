@@ -27,10 +27,15 @@
  * This file is included from AutoProxy.js.
  */
 
-const dataSeed = Math.random();    // Make sure our properties have randomized names
+/*const dataSeed = Math.random();    // Make sure our properties have randomized names
 const docDataProp = "aupDocData" + dataSeed;
 const nodeDataProp = "aupNodeData" + dataSeed;
-const nodeIndexProp = "aupNodeIndex" + dataSeed;
+const nodeIndexProp = "aupNodeIndex" + dataSeed;*/
+const docDataProp = new WeakMap();
+const nodeDataProp = new WeakMap();
+const nodeIndexProp = new WeakMap();
+const windowSelection = new WeakMap();
+
 var nodeIndex = 0;
 
 function RequestList(wnd) {
@@ -68,8 +73,8 @@ RequestList.prototype = {
    */
   install: function(/**Window*/ wnd)
   {
-    this.window = getWeakReference(wnd);
-    wnd.document[docDataProp] = this;
+    this.window = wnd;
+    docDataProp.set(wnd.document, this);
 
     let topWnd = wnd.top;
     if (topWnd != wnd)
@@ -117,11 +122,11 @@ RequestList.prototype = {
    */
   notifyListeners: function(type, entry)
   {
-    let wnd = getReferencee(this.window);
+    let wnd = this.window;
     if (this.detached || !wnd)
       return;
 
-    for each (let listener in RequestList._listeners)
+    for (let listener of RequestList._listeners)
       listener(wnd, type, this, entry);
   },
 
@@ -158,7 +163,7 @@ RequestList.prototype = {
     if (key in this.entries)
       return this.entries[key];
 
-    let wnd = getReferencee(this.window);
+    let wnd = this.window;
     let numFrames = (wnd ? wnd.frames.length : -1);
     for (let i = 0; i < numFrames; i++)
     {
@@ -180,9 +185,9 @@ RequestList.prototype = {
 
     // Accessing wnd.frames will flush outstanding content policy requests in Gecko 1.9.0/1.9.1.
     // Access it now to make sure we return the correct result even if more nodes are added here.
-    let wnd = getReferencee(this.window);
-    let frames = wnd.frames;
+    let wnd = this.window;
 
+    let frames = wnd ? wnd.frames : [];
     this._compactCounter = 0;
     this._lastCompact = now;
 
@@ -200,12 +205,12 @@ RequestList.prototype = {
       if (key[0] == " ")
       {
         let entry = this.entries[key];
-        if (!entry.hasAdditionalNodes && now - entry.lastUpdate >= 60000 && !entry.nodes.length)
+        /*if (!entry.hasAdditionalNodes && now - entry.lastUpdate >= 60000 && !entry.nodes.length)
         {
           hadOutdated.value = true;
           delete this.entries[key];
         }
-        else
+        else*/
           results.push(this.entries[key]);
       }
     }
@@ -239,8 +244,8 @@ RequestList.prototype = {
  */
 RequestList.getDataForWindow = function(wnd, noInstall)
 {
-  if (wnd.document && docDataProp in wnd.document)
-    return wnd.document[docDataProp];
+  if (wnd.document && docDataProp.has(wnd.document))
+    return docDataProp.get(wnd.document);
   else if (!noInstall)
     return new RequestList(wnd);
   else
@@ -258,7 +263,7 @@ RequestList.getDataForNode = function(node, noParent)
 {
   while (node)
   {
-    let entryKey = node.getUserData(nodeDataProp);
+    let entryKey = nodeDataProp.get(node);
     if (entryKey)
     {
       let wnd = getWindow(node);
@@ -302,6 +307,19 @@ RequestList.removeListener = function(/**Function*/ listener)
   for (var i = 0; i < RequestList._listeners.length; i++)
     if (RequestList._listeners[i] == listener)
       RequestList._listeners.splice(i--, 1);
+};
+
+RequestList.storeSelection = function(/**Window*/ wnd, /**String*/ selection)
+{
+  if(wnd && wnd.document)
+    windowSelection.set(wnd.document, selection);
+};
+RequestList.getSelection = function(/**Window*/ wnd) /**String*/
+{
+  if (wnd && wnd.document && windowSelection.has(wnd.document))
+    return windowSelection.get(wnd.document);
+  else
+    return null;
 };
 
 function RequestEntry(key, contentType, docDomain, thirdParty, location)
@@ -390,10 +408,11 @@ RequestEntry.prototype =
     let result = [];
     for (let i = 0; i < this._nodes.length; i++)
     {
-      let node = getReferencee(this._nodes[i]);
+      let node = this._nodes[i];
 
       // Remove node if associated with a different weak reference - this node was added to a different list already
-      if (node && node.getUserData(nodeIndexProp) == this._indexes[i])
+      //if (node && node.getUserData(nodeIndexProp) == this._indexes[i])
+      if (node && nodeIndexProp.get(node) == this._indexes[i])
         result.push(node);
       else
       {
@@ -421,20 +440,22 @@ RequestEntry.prototype =
   addNode: function(/**Node*/ node)
   {
     // Compact the list of nodes after 100 additions but at most once every 5 seconds
-    if (++this._compactCounter >= 100 && Date.now() - this._lastCompact > 5000)
-      this.nodes;
-    else
+    if (++this._compactCounter >= 100 && Date.now() - this._lastCompact > 5000){
+      //this.nodes;
+    }else{
       this.lastUpdate = Date.now();
+    }
 
-    node.setUserData(nodeDataProp, this.key, null);
+    //node.setUserData(nodeDataProp, this.key, null);
+    nodeDataProp.set(node, this.key);
 
-    let weakRef = getWeakReference(node);
-    if (weakRef)
+    if (node)
     {
-      this._nodes.push(weakRef);
+      this._nodes.push(node);
 
       ++nodeIndex;
-      node.setUserData(nodeIndexProp, nodeIndex, null);
+      //node.setUserData(nodeIndexProp, nodeIndex, null);
+      nodeIndexProp.set(node, nodeIndex);
       this._indexes.push(nodeIndex);
     }
     else
@@ -453,26 +474,3 @@ RequestEntry.prototype =
     return result;
   }
 };
-
-/**
- * Stores a weak reference to a DOM node (will store a reference to original node if wrapped).
- */
-function getWeakReference(/**nsISupports*/ node) /**nsIWeakReference*/
-{
-  if (node instanceof Ci.nsISupportsWeakReference)
-    return Cu.getWeakReference(node);
-  else
-    return null;
-}
-
-/**
- * Retrieves a DOM node from a weak reference, restores XPCNativeWrapper if necessary.
- */
-function getReferencee(/**nsIWeakReference*/ weakRef) /**nsISupports*/
-{
-  try {
-    return weakRef.QueryReferent(Ci.nsISupports);
-  } catch (e) {
-    return null;
-  }
-}

@@ -61,7 +61,7 @@ var synchronizer =
   checkSubscriptions: function()
   {
     let time = Date.now()/1000;
-    for each (let subscription in filterStorage.subscriptions)
+    for (let subscription of filterStorage.subscriptions)
     {
       if (!(subscription instanceof DownloadableSubscription) || !subscription.autoDownload)
         continue;
@@ -144,7 +144,7 @@ var synchronizer =
 
     lines.shift();
     let result = [];
-    for each (let line in lines)
+    for (let line of lines)
     {
       let filter = Filter.fromText(normalizeFilter(line));
       if (filter)
@@ -317,7 +317,7 @@ var synchronizer =
       subscription.errors = 0;
 
       let expires = parseInt(new Date(request.getResponseHeader("Expires")).getTime() / 1000) || 0;
-      for each (let filter in newFilters)
+      for (let filter of newFilters)
       {
         if (filter instanceof CommentFilter && /\bExpires\s*(?::|after)\s*(\d+)\s*(h)?/i.test(filter.text))
         {

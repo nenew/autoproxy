@@ -32,7 +32,7 @@ function init()
   menu.newList(E('defaultProxy'), prefs.defaultProxy, true);
 
   // one row per rule group
-  for each (let subscription in filterStorage.subscriptions) {
+  for (let subscription of filterStorage.subscriptions) {
     var group      = cE("row"),
         groupType  = cE("label"),
         groupTitle = cE("textbox");

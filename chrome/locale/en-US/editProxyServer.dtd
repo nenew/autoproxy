@@ -12,6 +12,8 @@
 
 <!ENTITY socks5.label            "socks5">
 
+<!ENTITY remotedns.label         "Remote DNS">
+
 <!ENTITY delete.label            "Delete">
 
 <!ENTITY addButton.label         "Add proxy">

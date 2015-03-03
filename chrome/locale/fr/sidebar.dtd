@@ -21,6 +21,7 @@
 <!ENTITY tooltip.filterSource.label "Source de la règle :">
 <!ENTITY context.disablefilteronsite.label "Désactiver cette règle pour --">
 <!ENTITY context.enablefilteronsite.label "Réactiver la règle pour --">
+<!ENTITY context.editfilter.label "Modifier le règle actif">
 <!ENTITY context.open.label "Ouvrir dans un nouvel onglet">
 <!ENTITY context.flash.label "Cadres d'élément Flash">
 <!ENTITY context.copy.label "Copier l'adresse de l'élément">

@@ -5,6 +5,7 @@
 <!ENTITY http.label "HTTP">
 <!ENTITY socks4.label "SOCKS v4">
 <!ENTITY socks5.label "SOCKS v5">
+<!ENTITY remotedns.label "Remote DNS">
 <!ENTITY delete.label "Supprimer">
 <!ENTITY addButton.label "Ajout de proxy">
 <!ENTITY addButton.accesskey "A">

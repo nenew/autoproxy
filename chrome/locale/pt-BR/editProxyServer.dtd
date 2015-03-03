@@ -1,17 +1,24 @@
 <!ENTITY dialog.title "Editar o servidor de proxy">
 <!ENTITY name.label "Dar um nome:">
-<!ENTITY host.label "Hospedeiro do Proxy:">
+<!ENTITY host.label "Proxy Host:">
 <!ENTITY port.label "Porta:">
 <!ENTITY http.label "http">
 <!ENTITY socks4.label "socks4">
 <!ENTITY socks5.label "socks5">
+<!ENTITY remotedns.label "Remote DNS">
 <!ENTITY delete.label "Apagar">
-<!ENTITY addButton.label "Adicionar proxy">
+<!ENTITY addButton.label "Add proxy">
 <!ENTITY addButton.accesskey "A">
-<!ENTITY delButton.label "Excluir proxy">
-<!ENTITY delButton.accesskey "E">
-<!ENTITY resetButton.label "Redefinir para padrão">
+<!ENTITY delButton.label "Delete proxy">
+<!ENTITY delButton.accesskey "D">
+<!ENTITY resetButton.label "Reset to default">
 <!ENTITY resetButton.accesskey "R">
-<!ENTITY warning.text "Atenção: você escolheu excluir todos os proxies, lembre-se de adicionar um novo proxy ou o AutoProxy não funcionará.">
-<!ENTITY note.text "Nota: você optou por excluir o proxy padrão, lembre-se de definir um novo proxy padrão (no menu &quot;Escolher servidor proxy&quot;) ou o AutoProxy pode funcionará.">
-<!ENTITY tip.text "Dica: O clique no botão &quot;Cancelar&quot; desfará a operação anterior.">
+<!ENTITY warning.text "Warning: you chose to delete all proxies, please
+
+
+ remember to add a new proxy, or AutoProxy will not work.">
+<!ENTITY note.text "Note: you chose to delete the default proxy, please remember to set a new
+
+
+ default proxy(by &quot;Choose proxy server&quot; menu), or AutoProxy may not work.">
+<!ENTITY tip.text "Tip: Click the &quot;Cancel&quot; button can undo previous operation.">

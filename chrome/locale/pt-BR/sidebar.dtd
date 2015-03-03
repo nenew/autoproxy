@@ -21,6 +21,7 @@
 <!ENTITY tooltip.filterSource.label "Fonte da regra:">
 <!ENTITY context.disablefilteronsite.label "Desativar esta regra em --">
 <!ENTITY context.enablefilteronsite.label "Reativar regra em --">
+<!ENTITY context.editfilter.label "Editar regra em efeito">
 <!ENTITY context.open.label "Abrir em nova aba">
 <!ENTITY context.flash.label "Piscar a borda do item">
 <!ENTITY context.copy.label "Copiar o endereço do item">

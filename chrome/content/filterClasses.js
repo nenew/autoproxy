@@ -197,7 +197,7 @@ function ActiveFilter(text, domains)
 
   if (domains != null)
   {
-    for each (let domain in domains)
+    for (let domain of domains)
     {
       if (domain == "")
         continue;
@@ -407,7 +407,7 @@ RegExpFilter.fromText = function(text)
   {
     options = RegExp.$1.toUpperCase().split(",");
     text = text.replace(Filter.optionsRegExp, "");
-    for each (let option in options)
+    for (let option of options)
     {
       let value;
       [option, value] = option.split("=");

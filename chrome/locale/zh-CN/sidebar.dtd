@@ -21,6 +21,7 @@
 <!ENTITY tooltip.filterSource.label "规则来源:">
 <!ENTITY context.disablefilteronsite.label "这 --  禁用这条规则">
 <!ENTITY context.enablefilteronsite.label "在 -- 重新启用代理规则">
+<!ENTITY context.editfilter.label "编辑代理规则有效…">
 <!ENTITY context.open.label "在新标签页打开">
 <!ENTITY context.flash.label "闪动显示该项目的边框">
 <!ENTITY context.copy.label "复制项目地址">

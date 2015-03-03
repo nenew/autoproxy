@@ -99,7 +99,7 @@ var filterListener =
         action == "update")
     {
       let subscriptionMap = {__proto__: null};
-      for each (let subscription in subscriptions)
+      for (let subscription of subscriptions)
         subscriptionMap[subscription.url] = true;
       this.subscriptionFilter = function(subscription)
       {
@@ -113,13 +113,13 @@ var filterListener =
         action == "remove" || action == "disable")
     {
       let method = (action == "add" || action == "enable" ? this.addFilter : this.removeFilter);
-      for each (let subscription in subscriptions)
+      for (let subscription of subscriptions)
         if (action == "disable" || !subscription.disabled)
           subscription.filters.forEach(method, this);
     }
     else if (action == "update")
     {
-      for each (let subscription in subscriptions)
+      for (let subscription of subscriptions)
       {
         if (!subscription.disabled)
         {
@@ -132,7 +132,7 @@ var filterListener =
     {
       blacklistMatcher.clear();
       whitelistMatcher.clear();
-      for each (let subscription in subscriptions)
+      for (let subscription of subscriptions)
         if (!subscription.disabled)
           subscription.filters.forEach(this.addFilter, this);
     }
@@ -153,7 +153,7 @@ var filterListener =
       {
         filters = filters.filter(function(filter)
         {
-          for each (let subscription in filter.subscriptions)
+          for (let subscription of filter.subscriptions)
           {
             if (!(subscription instanceof SpecialSubscription) || subscription.disabled)
               return false;

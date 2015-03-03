@@ -27,6 +27,7 @@
 
 <!ENTITY context.disablefilteronsite.label  "Disable this rule on --">
 <!ENTITY context.enablefilteronsite.label   "Re-enable rule on --">
+<!ENTITY context.editfilter.label "Edit Rule in effect">
 <!ENTITY context.open.label       "Open in New Tab">
 <!ENTITY context.flash.label      "Flash item's borders">
 <!ENTITY context.copy.label       "Copy item's address">

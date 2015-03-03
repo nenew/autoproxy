@@ -21,6 +21,7 @@
 <!ENTITY tooltip.filterSource.label "Regelkälla:">
 <!ENTITY context.disablefilteronsite.label "Inaktivera den här regeln för --">
 <!ENTITY context.enablefilteronsite.label "Återaktivera regel för --">
+<!ENTITY context.editfilter.label "regel är på">
 <!ENTITY context.open.label "Öppna i ny flik">
 <!ENTITY context.flash.label "Flash-objektets kantlinjer">
 <!ENTITY context.copy.label "Kopiera objektets adress">

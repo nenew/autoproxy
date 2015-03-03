@@ -1,26 +1,19 @@
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
+/*
+ * This file is part of Adblock Plus <http://adblockplus.org/>,
+ * Copyright (C) 2006-2014 Eyeo GmbH
  *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * Adblock Plus is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
+ * Adblock Plus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * The Original Code is Adblock Plus.
- *
- * The Initial Developer of the Original Code is
- * Wladimir Palant.
- * Portions created by the Initial Developer are Copyright (C) 2006-2009
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * ***** END LICENSE BLOCK ***** */
+ * You should have received a copy of the GNU General Public License
+ * along with Adblock Plus.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * Draws a blinking border for a list of matching nodes.
@@ -31,27 +24,34 @@ var flasher = {
   count: 0,
   timer: null,
 
-  flash: function(nodes) {
+  flash: function(nodes)
+  {
     this.stop();
+    if (nodes)
+      nodes = nodes.filter(function(node) node.nodeType == Node.ELEMENT_NODE);
     if (!nodes || !nodes.length)
       return;
 
-    if (prefs.flash_scrolltoitem && ("document" in nodes[0] || nodes[0].ownerDocument)) {
+    if (prefs.flash_scrolltoitem && nodes[0].ownerDocument && nodes[0].parentNode !== null)
+    {
       // Ensure that at least one node is visible when flashing
-      var wnd = ("document" in nodes[0] ? nodes[0] : nodes[0].ownerDocument.defaultView);
-      try {
-        var viewer = wnd.QueryInterface(Ci.nsIInterfaceRequestor)
+      let wnd = nodes[0].ownerDocument.defaultView;
+      try
+      {
+        let topWnd = wnd.QueryInterface(Ci.nsIInterfaceRequestor)
                         .getInterface(Ci.nsIWebNavigation)
                         .QueryInterface(Ci.nsIDocShellTreeItem)
                         .rootTreeItem
                         .QueryInterface(Ci.nsIInterfaceRequestor)
-                        .getInterface(Ci.nsIDOMWindow)
-                        .document.getElementById("aup-hooks")
-                        .wrappedJSObject
-                        .getBrowser()
-                        .markupDocumentViewer;
-        viewer.scrollToNode(nodes[0]);
-      } catch(e) {}
+                        .getInterface(Ci.nsIDOMWindow);
+        let browser = topWnd.gBrowser;
+        if (browser)
+          browser.markupDocumentViewer.scrollToNode(nodes[0]);
+      }
+      catch(e)
+      {
+        Cu.reportError(e);
+      }
     }
 
     this.nodes = nodes;
@@ -88,17 +88,25 @@ var flasher = {
     }
   },
 
-  setOutline: function(value) {
+  setOutline: function(outline, offset)
+  {
     for (var i = 0; i < this.nodes.length; i++)
+    {
       if ("style" in this.nodes[i])
-        this.nodes[i].style.outline = value;
+      {
+        this.nodes[i].style.outline = outline;
+        this.nodes[i].style.outlineOffset = offset;
+      }
+    }
   },
 
-  switchOn: function() {
-    this.setOutline("#CC0000 dotted 2px");
+  switchOn: function()
+  {
+    this.setOutline("#CC0000 dotted 2px", "-2px");
   },
 
-  switchOff: function() {
-    this.setOutline("none");
+  switchOff: function()
+  {
+    this.setOutline("", "");
   }
 };

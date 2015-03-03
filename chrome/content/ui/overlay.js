@@ -24,6 +24,7 @@
 
 window.addEventListener("load", function()
 {
+  window.removeEventListener("load", arguments.callee, false);
   // Abuse sandboxes so get an execution context for our code
   let sandbox = new Components.utils.Sandbox(window);
   sandbox.window = window;

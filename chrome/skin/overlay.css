@@ -124,3 +124,9 @@ menuitem[default="true"] {
 #aup-sidebar-close:hover:active {
   -moz-image-region: rect(0px, 42px, 14px, 28px);
 }
+
+menu.chooseProxy4RuleGroups > .menu-iconic-left{
+	-moz-appearance: checkbox;
+	margin-left: 4px;
+	margin-right: 9px;
+}

@@ -1,12 +1,29 @@
-<!ENTITY search.label "Kërko:">
+<!ENTITY detached.title "AutoProxy: Proxyable items (detached)">
+<!ENTITY detach.label "Detach">
+<!ENTITY reattach.label "Reattach">
+<!ENTITY search.label "Search:">
 <!ENTITY search.accesskey "S">
-<!ENTITY type.label "LLoji">
-<!ENTITY address.label "Adresa">
-<!ENTITY filter.label "Rregulla">
-<!ENTITY state.label "Gjendja">
-<!ENTITY size.label "Madhësia">
-<!ENTITY docDomain.label "Burimi i dokumentit">
-<!ENTITY tooltip.address.label "Adresa:">
-<!ENTITY tooltip.type.label "Lloji:">
-<!ENTITY tooltip.size.label "Madhësia:">
-<!ENTITY context.copyFilter.label "Kojpo rregullën">
+<!ENTITY type.label "Type">
+<!ENTITY address.label "Address">
+<!ENTITY filter.label "Rule">
+<!ENTITY state.label "State">
+<!ENTITY size.label "Size">
+<!ENTITY docDomain.label "Document source">
+<!ENTITY noitems.label "No proxyable items">
+<!ENTITY whitelisted.label "No-proxy page">
+<!ENTITY tooltip.address.label "Address:">
+<!ENTITY tooltip.type.label "Type:">
+<!ENTITY tooltip.type.blocked "(Proxyed)">
+<!ENTITY tooltip.type.whitelisted "(Proxy prohibited, connect directly)">
+<!ENTITY tooltip.size.label "Size:">
+<!ENTITY tooltip.docDomain.label "Document source:">
+<!ENTITY tooltip.filter.label "Rule in effect:">
+<!ENTITY tooltip.filterSource.label "Rule source:">
+<!ENTITY context.disablefilteronsite.label "Disable this rule on --">
+<!ENTITY context.enablefilteronsite.label "Re-enable rule on --">
+<!ENTITY context.editfilter.label "Edit rule in effect">
+<!ENTITY context.open.label "Open in New Tab">
+<!ENTITY context.flash.label "Flash item's borders">
+<!ENTITY context.copy.label "Copy item's address">
+<!ENTITY context.copyFilter.label "Copy rule">
+<!ENTITY context.selectAll.label "Select all">

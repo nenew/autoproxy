@@ -76,7 +76,7 @@ var prefs = {
     types[defaultBranch.PREF_BOOL] = "Bool";
 
     this.prefList = [];
-    for each (var name in defaultPrefs) {
+    for (var name of defaultPrefs) {
       var type = defaultBranch.getPrefType(name);
       var typeName = (type in types ? types[type] : "Char");
 
@@ -138,7 +138,7 @@ var prefs = {
       this.loadPref(this.prefList[i]);
 
     // Fire pref listeners
-    for each (var listener in this.listeners)
+    for (var listener of this.listeners)
       listener(this);
   },
 

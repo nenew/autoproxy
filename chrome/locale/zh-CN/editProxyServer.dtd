@@ -5,6 +5,7 @@
 <!ENTITY http.label "http">
 <!ENTITY socks4.label "socks4">
 <!ENTITY socks5.label "socks5">
+<!ENTITY remotedns.label "远程 DNS">
 <!ENTITY delete.label "删除">
 <!ENTITY addButton.label "添加代理">
 <!ENTITY addButton.accesskey "A">

@@ -117,7 +117,7 @@ var filterStorage =
    */
   triggerSubscriptionObservers: function(action, subscriptions)
   {
-    for each (let observer in this.subscriptionObservers)
+    for (let observer of this.subscriptionObservers)
       observer(action, subscriptions);
   },
 
@@ -152,7 +152,7 @@ var filterStorage =
    */
   triggerFilterObservers: function(action, filters, additionalData)
   {
-    for each (let observer in this.filterObservers)
+    for (let observer of this.filterObservers)
       observer(action, filters, additionalData);
   },
 
@@ -165,7 +165,7 @@ var filterStorage =
     if (!(subscription.url in this.knownSubscriptions))
       return;
 
-    for each (let filter in subscription.filters)
+    for (let filter of subscription.filters)
       filter.subscriptions.push(subscription);
   },
 
@@ -196,7 +196,7 @@ var filterStorage =
     if (!(subscription.url in this.knownSubscriptions))
       return;
 
-    for each (let filter in subscription.filters)
+    for (let filter of subscription.filters)
     {
       let i = filter.subscriptions.indexOf(subscription);
       if (i >= 0)
@@ -252,7 +252,7 @@ var filterStorage =
     let subscription = null;
     if (!subscription)
     {
-      for each (let s in this.subscriptions)
+      for (let s of this.subscriptions)
       {
         if (s instanceof SpecialSubscription && !s.disabled)
         {
@@ -332,10 +332,10 @@ var filterStorage =
     if (!filters)
     {
       filters = [];
-      for each (let filter in Filter.knownFilters)
+      for (let filter of Filter.knownFilters)
         filters.push(filter);
     }
-    for each (let filter in filters)
+    for (let filter of filters)
     {
       filter.hitCount = 0;
       filter.lastHit = 0;
@@ -413,7 +413,7 @@ var filterStorage =
 
     if (userFilters)
     {
-      for each (let filter in userFilters)
+      for (let filter of userFilters)
       {
         filter = Filter.fromText(filter);
         if (filter)
@@ -473,7 +473,7 @@ var filterStorage =
               if (this.subscriptions.length)
               {
                 let subscription = this.subscriptions[this.subscriptions.length - 1];
-                for each (let text in curObj)
+                for (let text of curObj)
                 {
                   let filter = Filter.fromText(text);
                   if (filter)
@@ -580,9 +580,9 @@ var filterStorage =
     let saved = {__proto__: null};
 
     // Save filter data
-    for each (let subscription in this.subscriptions)
+    for (let subscription of this.subscriptions)
     {
-      for each (let filter in subscription.filters)
+      for (let filter of subscription.filters)
       {
         if (!(filter.text in saved))
         {
@@ -597,7 +597,7 @@ var filterStorage =
     timeLine.log("saved filter data");
 
     // Save subscriptions
-    for each (let subscription in this.subscriptions)
+    for (let subscription of this.subscriptions)
     {
       buf.push("");
       subscription.serialize(buf);

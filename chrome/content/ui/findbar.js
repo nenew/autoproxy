@@ -26,6 +26,8 @@
  * Fake browser implementation to make findbar widget happy - searches in
  * the filter list.
  */
+
+
 let fastFindBrowser =
 {
   fastFind: {
@@ -33,25 +35,60 @@ let fastFindBrowser =
     foundLink: null,
     foundEditable: null,
     caseSensitive: false,
+    _resultListeners: [],
+
     get currentWindow() { return fastFindBrowser.contentWindow; },
 
     find: function(searchString, linksOnly)
     {
       this.searchString = searchString;
-      return treeView.find(this.searchString, 0, false, this.caseSensitive);
+      //return treeView.find(this.searchString, 0, false, this.caseSensitive);
+      var result = treeView.find(this.searchString, 0, false, this.caseSensitive);
+      this._notify(result, false);
     },
 
     findAgain: function(findBackwards, linksOnly)
     {
-      return treeView.find(this.searchString, findBackwards ? -1 : 1, false, this.caseSensitive);
+      //return treeView.find(this.searchString, findBackwards ? -1 : 1, false, this.caseSensitive);
+      var result = treeView.find(this.searchString, findBackwards ? -1 : 1, false, this.caseSensitive);
+      this._notify(result, findBackwards);
+    },
+
+    _notify: function(result, findBackwards){
+      for (let listener of this._resultListeners){
+        try {
+          if (listener.onFindResult.length == 1){
+            listener.onFindResult({
+              result: result,
+              findBackwards: findBackwards,
+              earchString: this.searchString
+            });
+          }else{
+            listener.onFindResult(result, findBackwards);
+          }
+        }catch(ex){}
+      }
     },
 
     // Irrelevant for us
-    init: function() {},
-    setDocShell: function() {},
-    setSelectionModeAndRepaint: function() {},
-    collapseSelection: function() {}
+    addResultListener: function(listener) {
+      if (this._resultListeners.indexOf(listener) === -1)
+        this._resultListeners.push(listener);
+    },
+    removeResultListener: function(listener) {
+      let index = this._resultListeners.indexOf(listener);
+      if (index !== -1)
+        this._resultListeners.splice(index, 1);
+    },
+    requestMatchesCount: function() {},
+    enableSelection: function() {},
+    highlight: function() {},
+    focusContent: function () {},
+    removeSelection: function () {},
+    keyPress: function() {},
+    getInitialSelection: function() {}
   },
+
   currentURI: aup.makeURL("http://example.com/"),
   contentWindow: {
     focus: function()
@@ -68,13 +105,9 @@ let fastFindBrowser =
     },
   },
 
-  addEventListener: function(event, handler, capture)
-  {
-    E("list").addEventListener(event, handler, capture);
-  },
-  removeEventListener: function(event, handler, capture)
-  {
-    E("list").addEventListener(event, handler, capture);
-  },
 }
+
+// compatibility with Nightly 26+
+fastFindBrowser.finder = fastFindBrowser.fastFind;
+fastFindBrowser.finder.fastFind = fastFindBrowser.fastFind.find;
 
