@@ -59,7 +59,7 @@ var proxy =
     proxy.server = []; proxy.getName = [];
     for (var conf of proxy.validConfigs) {
       proxy.getName.push(conf.name);
-      proxy.server.push(pS.newProxyInfo(conf.type, conf.host, conf.port, (conf.type == 'socks' && conf.remoteDNS ? Ci.nsIProxyInfo.TRANSPARENT_PROXY_RESOLVES_HOST : 0), 0, null));
+      proxy.server.push(pS.newProxyInfo(conf.type, conf.host, conf.port, (conf.type == 'socks' && conf.remoteDNS ? Ci.nsIProxyInfo.TRANSPARENT_PROXY_RESOLVES_HOST : 0), 30, null));
     }
 
     // Refresh defaultProxy {nsIProxyInfo}
@@ -67,10 +67,14 @@ var proxy =
     proxy.nameOfDefaultProxy = proxy.getName[prefs.defaultProxy] || proxy.getName[0];
 
     // Refresh fallbackProxy {nsIProxyInfo}
-    //proxy.fallbackProxy = prefs.fallbackProxy == -1 ?
-    proxy.failoverTimeout = 1800;
-    proxy.failoverProxy = prefs.fallbackProxy == -1 ?
+    proxy.fallbackProxy = prefs.fallbackProxy == -1 ?
            proxy.direct : proxy.server[prefs.fallbackProxy];
+
+    if(prefs.fallbackProxy != -1){
+      proxy.server.forEach(function(p){
+        p.failoverProxy = proxy.fallbackProxy == p ? proxy.direct : proxy.fallbackProxy;
+      });
+    }
 
     pS.unregisterFilter(proxy);
     pS.registerFilter(proxy, 0);

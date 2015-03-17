@@ -748,19 +748,22 @@ var treeView = {
       proStr = "selected-" + this.selection.isSelected(row);
     }
     var state;
-    if (this.data && this.data.length) {
-    if(properties){
-      properties.AppendElement(this.atoms["dummy-false"]);
-    }else{
-      proStr+= " dummy-false";
-    }
-
-    let filter = this.data[row].filter;
-    if (filter){
+    if (this.data && this.data.length) 
+    {
       if(properties){
-        properties.AppendElement(this.atoms["filter-disabled-" + filter.disabled]);
+        properties.AppendElement(this.atoms["dummy-false"]);
       }else{
-        proStr+= " filter-disabled-" + filter.disabled;
+        proStr+= " dummy-false";
+      }
+
+      let filter = this.data[row].filter;
+      if (filter)
+      {
+       if(properties){
+          properties.AppendElement(this.atoms["filter-disabled-" + filter.disabled]);
+        }else{
+          proStr+= " filter-disabled-" + filter.disabled;
+        }
       }
 
       state = "state-regular";
@@ -771,12 +774,18 @@ var treeView = {
         else if (filter instanceof aup.BlockingFilter)
           state = "state-filtered";
       }
-    } else {
-      if(properties){
-          properties.AppendElement(this.atoms["dummy-true"]);
-      }else{
+    }
+    else 
+    {
+      if(properties)
+      {
+        properties.AppendElement(this.atoms["dummy-true"]);
+      }
+      else
+      {
         proStr+= " dummy-true";
       }
+
       state = "state-filtered";
     }
     proStr+= " "+state;
