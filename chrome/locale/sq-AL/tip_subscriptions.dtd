@@ -1,6 +1,45 @@
 <!ENTITY welcome.title "Mirë se vini tek AutoProxy">
+<!ENTITY subscribe.title "Add AutoProxy Rule Subscription">
+<!ENTITY description.par1 "Thank you for installing AutoProxy. Effective
+
+
+ proxy management requires a good set of rules. You can define it yourself,
+
+ or you can simply subscribe to a rule list others maintained for you.
+
+">
+<!ENTITY description.par2 "It will still be possible to add your own proxy
+
+
+ rules or subscribe/unsubscribe to rule list whenever necessary.
+
+">
+<!ENTITY description.par3 "Except proxy rules, you also need a proxy server.
+
+
+ AutoProxy has choosen Tor as the default. If you don't use Tor, please change
+
+ it to your own at the bottom of this window.
+
+">
+<!ENTITY description.par4 "You can choose one or none subscription from the
+
+
+  list of recommended subscriptions below:
+
+">
+<!ENTITY note "Note: Please don't choose a rule list which is not
+
+
+ maintained for your region.
+
+">
 <!ENTITY homepage.label "Faqja e internetit">
+<!ENTITY full-list.label "View all subscriptions">
+<!ENTITY other.label "Add a Custom Subscription">
 <!ENTITY other.accesskey "C">
+<!ENTITY defaultBtn.label "Default Proxy: ">
 <!ENTITY defaultBtn.accesskey "P">
 <!ENTITY defaultBtn.custom "Vendos proksi të ri">
+<!ENTITY acceptBtn.label "Subscribe">
 <!ENTITY acceptBtn.accesskey "S">

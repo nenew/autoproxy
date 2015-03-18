@@ -1,4 +1,5 @@
 <!ENTITY status.tooltip "État :">
+<!ENTITY defaultProxy.tooltip "Default proxy:">
 <!ENTITY blocked.tooltip "Éléments utilisant un proxy sur cette page :">
 <!ENTITY filters.tooltip "Règles les plus actives :">
 <!ENTITY menuitem.label "Préférences de AutoProxy">
@@ -10,4 +11,12 @@
 <!ENTITY context.frame.label "Cade du proxy">
 <!ENTITY sidebar.title "Éléments proxyable de la page actuelle">
 <!ENTITY settings.label "Préférences">
+<!ENTITY settings.accesskey "P">
+<!ENTITY report.label "Report to gfwList">
+<!ENTITY report.accesskey "R">
+<!ENTITY opensidebar.label "Proxyable items">
+<!-- Note: This access key should usually be the same as closesidebar.accesskey. It is the same menu item with different label depending on whether the sidebar is currently open.-->
+<!ENTITY opensidebar.accesskey "V">
 <!ENTITY closesidebar.label "Fermer les éléments proxyables">
+<!-- Note: This access key should usually be the same as opensidebar.accesskey. It is the same menu item with different label depending on whether the sidebar is currently open.-->
+<!ENTITY closesidebar.accesskey "V">

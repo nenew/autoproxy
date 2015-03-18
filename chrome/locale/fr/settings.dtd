@@ -1,6 +1,10 @@
 <!ENTITY dialog.title "Préférences d'AutoProxy">
+<!ENTITY filters.label "Proxy Rule">
 <!ENTITY filters.accesskey "g">
+<!ENTITY add.label "Add proxy rule">
 <!ENTITY add.accesskey "A">
+<!ENTITY addRuleGroup.label "Add rule group">
+<!ENTITY addRuleGroup.accesskey "G">
 <!ENTITY addsubscription.label "Ajouter un abonnement à une règle">
 <!ENTITY addsubscription.accesskey "b">
 <!ENTITY synchsubscriptions.label "Mettre à jour tous les abonnements">
@@ -11,6 +15,7 @@
 <!ENTITY export.accesskey "x">
 <!ENTITY clearall.label "Retirer les règles personnalisées">
 <!ENTITY clearall.accesskey "r">
+<!ENTITY resethitcounts.label "Reset hit statistics">
 <!ENTITY resethitcounts.accesskey "R">
 <!ENTITY proxies.label "Serveur proxy">
 <!ENTITY proxies.accesskey "S">
@@ -42,11 +47,13 @@
 <!ENTITY sort.ascending.accesskey "A">
 <!ENTITY sort.descending.label "Trier de Z à A">
 <!ENTITY sort.descending.accesskey "Z">
+<!ENTITY options.label "Options">
 <!ENTITY options.accesskey "O">
 <!ENTITY mode.auto.label "Mode automatique">
 <!ENTITY mode.auto.accesskey "a">
 <!ENTITY mode.global.label "Mode global">
 <!ENTITY mode.global.accesskey "g">
+<!ENTITY mode.disabled.label "Disable Proxy">
 <!ENTITY mode.disabled.accesskey "D">
 <!ENTITY showintoolbar.label "Afficher dans la barre d'outils">
 <!ENTITY showintoolbar.accesskey "b">
@@ -62,8 +69,11 @@
 <!ENTITY filterdoc.accesskey "r">
 <!ENTITY about.label "À propos de AutoProxy">
 <!ENTITY about.accesskey "p">
+<!ENTITY description "The following rules determine which addresses should be proxyed and which ones should not:">
 <!ENTITY filter.column "Règles">
 <!ENTITY filter.accesskey "f">
+<!ENTITY slow.column "Slow filters">
+<!ENTITY slow.accesskey "w">
 <!ENTITY enabled.column "Activé">
 <!ENTITY enabled.accesskey "v">
 <!ENTITY hitcount.column "Occurrences">
@@ -73,6 +83,7 @@
 <!ENTITY context.edit.label "Éditer la règle">
 <!ENTITY context.resethitcount.label "Réinitialiser les statistiques de l'occurrence pour la règle">
 <!ENTITY context.synchsubscription.label "Mettre maintenant à jour l'abonnement">
+<!ENTITY context.editsubscription.label "Edit rule group">
 <!ENTITY context.moveup.label "Faire monter la règle">
 <!ENTITY context.movedown.label "Faire descendre la règle">
 <!ENTITY context.movegroupup.label "Faire monter le groupe">
@@ -81,3 +92,10 @@
 <!ENTITY context.disable.label "Désactiver">
 <!ENTITY apply.label "Appliquer">
 <!ENTITY apply.accesskey "p">
+<!ENTITY changeClickBehaviour.label "When click on icon:">
+<!ENTITY changeClickBehaviour_context "Context menu">
+<!ENTITY changeClickBehaviour_proxyMenu "Proxy menu">
+<!ENTITY changeClickBehaviour_cycleProxy "Cycle default proxy">
+<!ENTITY changeClickBehaviour_proxyMode "Cycle proxy mode">
+<!ENTITY changeClickBehaviour_preference "Preference">
+<!ENTITY changeClickBehaviour_proxyable "Proxyable items">

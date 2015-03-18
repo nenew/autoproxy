@@ -15,6 +15,8 @@
 <!ENTITY report.label "向 gfwList 报告问题">
 <!ENTITY report.accesskey "R">
 <!ENTITY opensidebar.label "可代理资源列表">
+<!-- Note: This access key should usually be the same as closesidebar.accesskey. It is the same menu item with different label depending on whether the sidebar is currently open.-->
 <!ENTITY opensidebar.accesskey "V">
 <!ENTITY closesidebar.label "关闭可代理资源列表">
+<!-- Note: This access key should usually be the same as opensidebar.accesskey. It is the same menu item with different label depending on whether the sidebar is currently open.-->
 <!ENTITY closesidebar.accesskey "V">

@@ -210,7 +210,7 @@ const aup =
     subscription.lastDownload = parseInt(new Date().getTime() / 1000);
 
     let newFilters = [];
-    for each (let filter in filters)
+    for (let filter of filters)
     {
       filter = Filter.fromText(normalizeFilter(filter));
       if (filter)
@@ -246,7 +246,7 @@ const aup =
    */
   addPatterns: function(/**Array of String*/ filters, /**Integer*/ length)
   {
-    for each (let filter in filters)
+    for (let filter of filters)
     {
       filter = Filter.fromText(normalizeFilter(filter));
       if (filter)
@@ -260,7 +260,7 @@ const aup =
    */
   removePatterns: function(/**Array of String*/ filters, /**Integer*/ length)
   {
-    for each (let filter in filters)
+    for (let filter of filters)
     {
       filter = Filter.fromText(normalizeFilter(filter));
       if (filter)
@@ -274,7 +274,7 @@ const aup =
    */
   getInstalledVersion: function() /**String*/
   {
-    return "{{VERSION}}";
+    return "0.4b2.2013051811";
   },
 
   /**

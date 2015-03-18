@@ -14,7 +14,9 @@
 <!ENTITY settings.accesskey "P">
 <!ENTITY report.label "Relatório para gfwList">
 <!ENTITY report.accesskey "R">
-<!ENTITY opensidebar.label "Itens sujeito a Proxy">
+<!ENTITY opensidebar.label "Proxyable items">
+<!-- Note: This access key should usually be the same as closesidebar.accesskey. It is the same menu item with different label depending on whether the sidebar is currently open.-->
 <!ENTITY opensidebar.accesskey "V">
 <!ENTITY closesidebar.label "Fechar itens bloqueáveis pelo proxy">
+<!-- Note: This access key should usually be the same as opensidebar.accesskey. It is the same menu item with different label depending on whether the sidebar is currently open.-->
 <!ENTITY closesidebar.accesskey "V">

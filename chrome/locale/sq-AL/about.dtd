@@ -1,4 +1,7 @@
 <!ENTITY dialog.title "Për AutoProxy">
 <!ENTITY version.title "Versioni">
+<!ENTITY homepage.label "Homepage:">
 <!ENTITY author.label "Autori">
+<!ENTITY members.label "Active team members:">
 <!ENTITY contributors.label "Kontribuuesit:">
+<!ENTITY translators.label "Translators:">
