@@ -376,10 +376,9 @@ RegExpFilter.prototype =
    */
   matches: function(location, contentType, docDomain, thirdParty)
   {
-    return (this.regexp.test(location) &&
-            (RegExpFilter.typeMap[contentType] & this.contentType) != 0 &&
+    return ((RegExpFilter.typeMap[contentType] & this.contentType) != 0 &&
             (this.thirdParty == null || this.thirdParty == thirdParty) &&
-            this.isActiveOnDomain(docDomain));
+            this.isActiveOnDomain(docDomain) && this.regexp.test(location));
   }
 };
 aup.RegExpFilter = RegExpFilter;
