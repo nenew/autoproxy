@@ -104,7 +104,41 @@ let fastFindBrowser =
       E("list").boxObject.scrollByPages(num);
     },
   },
+  //https://issues.adblockplus.org/ticket/2832
+  messageManager:
+  {
+    _messageMap: {
+      "Findbar:Mouseup": "mouseup",
+      "Findbar:Keypress": "keypress"
+    },
 
+    _messageFromEvent: function(event)
+    {
+      for (let message in this._messageMap)
+        if (this._messageMap[message] == event.type)
+          return {target: event.currentTarget, name: message, data: event};
+      return null;
+    },
+
+    addMessageListener: function(message, listener)
+    {
+      if (!this._messageMap.hasOwnProperty(message))
+        return;
+
+      if (!("_AUPHandler" in listener))
+        listener._AUPHandler = (event) => listener.receiveMessage(this._messageFromEvent(event));
+
+      E("list").addEventListener(this._messageMap[message], listener._AUPHandler, false);
+    },
+
+    removeMessageListener: function(message, listener)
+    {
+      if (this._messageMap.hasOwnProperty(message) && listener._AUPHandler)
+        E("list").removeEventListener(this._messageMap[message], listener._AUPHandler, false);
+    },
+
+    sendAsyncMessage: function() {}
+  }
 }
 
 // compatibility with Nightly 26+

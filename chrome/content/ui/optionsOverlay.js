@@ -6,7 +6,9 @@ window.onload = bindEvent = function()
   if (!pane.loaded)
     pane.addEventListener("click", bindEvent, false);
   else {
-    document.getElementById("connectionSettings").setAttribute("oncommand", "handleProxySettings()");
+    var connectionSettings = document.getElementById("connectionSettings");
+    connectionSettings.removeAttribute("oncommand");
+    connectionSettings.addEventListener("command", handleProxySettings);
     pane.removeEventListener("click", bindEvent, false);
   }
 }

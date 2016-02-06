@@ -28,8 +28,8 @@ let result;
 let defaultLabel;
 let menupop;
 let selectedId;
-let E = function(id) { return document.getElementById(id); };
-let cE = function(tag) { return document.createElementNS(
+var E = function(id) { return document.getElementById(id); };
+var cE = function(tag) { return document.createElementNS(
         "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", tag); };
 
 function init()
@@ -66,7 +66,7 @@ function createMenuItems()
     mitem.setAttribute("id", i);
     mitem.setAttribute("type", "radio");
     mitem.setAttribute("label", proxy.getName[i]);
-    mitem.setAttribute("onclick", "changeDefaultLabel(this)");
+    mitem.addEventListener("click", changeDefaultLabel.bind(null, mitem));
     if (i == prefs.defaultProxy) mitem.setAttribute("checked", true);
     menupop.appendChild(mitem);
   }
@@ -77,7 +77,7 @@ function createMenuItems()
   var customItem = cE("menuitem");
   customItem.setAttribute("id", "customItem");
   customItem.setAttribute("label", E("defaultButton").getAttribute("customLabel"));
-  customItem.setAttribute("onclick", "customDefaultProxy()");
+  customItem.addEventListener("click", customDefaultProxy);
   menupop.appendChild(customItem);
 }
 

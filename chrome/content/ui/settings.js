@@ -1379,7 +1379,7 @@ const nsITreeView = Ci.nsITreeView;
  * nsITreeView implementation used for the filters list.
  * @class
  */
-let treeView = {
+var treeView = {
   //
   // nsISupports implementation
   //

@@ -76,11 +76,75 @@ aupInit();
 
 function aupInit() {
   // Initialize app hooks
+  var appID = Components.classes["@mozilla.org/xre/app-info;1"]
+                 .getService(Components.interfaces.nsIXULAppInfo).ID;
+  var isMessengerWindow = !!E("messengerWindow");
+  var hookFunc = {
+    "{ec8030f7-c20a-464f-9b0e-13a3a9e97384}": { //firefox
+      getBrowser: function ()
+      {
+        return window.gBrowser;
+      },
+      addTab: function ()
+      {
+        window.gBrowser.loadOneTab(arguments[0], null, null, null, false);
+      },
+      getToolbox: function ()
+      {
+        return E('navigator-toolbox');
+      },
+      getDefaultToolbar: function ()
+      {
+        return E('nav-bar');
+      }
+    },
+    "{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}": { //seamonkey
+      getBrowser: function ()
+      {
+        return isMessengerWindow ? window.messageContent : window.gBrowser;
+      },
+      addTab: function ()
+      {
+        if (isMessengerWindow)
+        {
+          let tabmail = E('tabmail');
+          return (tabmail ? tabmail.openTab('contentTab',
+          {
+            contentPage: arguments[0]
+          }) : false);
+        }
+        else
+        {
+          window.gBrowser.addTab(arguments[0], null, null, true);
+        }
+      },
+      getToolbox: function ()
+      {
+        return isMessengerWindow ? E('mail-toolbox') : E('navigator-toolbox');
+      },
+      getDefaultToolbar: function ()
+      {
+        if (isMessengerWindow) return E('mail-bar2') || E('msgToolbar');
+        return E('PersonalToolbar');
+      },
+      toolbarInsertBefore: function ()
+      {
+        return isMessengerWindow ? E('button-junk') : E('bookmarks-button');
+      }
+    },
+    "prism@developer.mozilla.org": { //Prism
+      getBrowser: function ()
+      {
+        return window.messageContent;
+      }
+    }
+  };
+
   for (let hook of ["getBrowser", "addTab", "getToolbox", "getDefaultToolbar", "toolbarInsertBefore"])
   {
-    let handler = aupHooks.getAttribute(hook);
+    let handler = hookFunc[appID][hook];
     if (handler)
-      aupHooks[hook] = new Function(handler);
+      aupHooks[hook] = handler;
   }
 
   // Process preferences

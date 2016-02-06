@@ -332,8 +332,8 @@ var filterStorage =
     if (!filters)
     {
       filters = [];
-      for (let filter of Filter.knownFilters)
-        filters.push(filter);
+      for (let i in Filter.knownFilters)
+        filters.push(Filter.knownFilters[i]);
     }
     for (let filter of filters)
     {
