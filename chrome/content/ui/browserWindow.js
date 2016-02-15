@@ -313,15 +313,17 @@ function aupReloadPrefs() {
   };
 
   var status = E("aup-status");
-  updateElement(status);
-  if (prefs.defaultstatusbaraction == 0)
-    status.setAttribute("popup", status.getAttribute("context"));
-  else
-    status.removeAttribute("popup");
+  if (status) {
+    updateElement(status);
+    if (prefs.defaultstatusbaraction == 0)
+      status.setAttribute("popup", status.getAttribute("context"));
+    else
+      status.removeAttribute("popup");
+  }
 
   var button = E("aup-toolbarbutton");
-  updateElement(button);
   if (button) {
+    updateElement(button);
     if (button.hasAttribute("context") && prefs.defaulttoolbaraction == 0)
     {
       button.setAttribute("popup", button.getAttribute("context"));

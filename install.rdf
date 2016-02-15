@@ -6,7 +6,7 @@
   <Description about="urn:mozilla:install-manifest">
 
     <em:id>autoproxy_fix@autoproxy.org</em:id>
-    <em:version>0.4b2.2013051811.4</em:version>
+    <em:version>0.4b2.2013051811.5</em:version>
     <em:type>2</em:type>
 
     <!-- Target Application this extension can install into,
